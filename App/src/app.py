@@ -20,15 +20,16 @@ df['Duration'] = pd.to_timedelta(df['Duration'])
 df['Category'] = df['Title'].apply(lambda x: 'Serie' if 'Season' in x or 'Episode' in x or 'Capítulo' in x or 'Temporada' in x else 'Película')
 
 # Layout de la aplicación
+ 
 app.layout = html.Div([
     # Encabezado con logo y título
     html.Div([
         html.Img(src='/assets/netflix_logo.png', style={'width': '150px', 'display': 'inline-block', 'vertical-align': 'middle'}),
-        html.H1("Análisis de Actividad de Visualización en Netflix", 
+        html.H1("Análisis de Preferencias en Netflix", 
                 style={'color': '#E50914', 'display': 'inline-block', 'margin-left': '20px', 'vertical-align': 'middle'}),
     ], style={'textAlign': 'center', 'backgroundColor': '#141414', 'padding': '10px'}),
 
-    # Sección de selección de perfil
+    # Selección de perfil
     html.Div([
         html.Label("Selecciona un perfil", style={'color': '#E5E5E5', 'fontSize': '20px'}),
         dcc.Dropdown(
@@ -38,19 +39,18 @@ app.layout = html.Div([
             style={'color': 'black', 'fontSize': '16px', 'width': '50%', 'margin': 'auto'}
         ),
     ], style={'textAlign': 'center', 'padding': '20px', 'backgroundColor': '#333'}),
-
     # Panel de estadísticas del perfil
     html.Div([
-        html.Div([
-            html.H3("Tipo de contenido preferido para este perfil:", style={'color': '#E5E5E5'}),
-            html.H2(id='preferred-content-type', style={'color': '#E50914', 'fontSize': '24px'})
-        ], style={'textAlign': 'center', 'margin': '20px'}),
+        html.H3("Número total de visualizaciones para el perfil seleccionado:", style={'color': '#E5E5E5'}),
+        html.H2(id='views-count', style={'color': '#E50914', 'fontSize': '24px'})  # Asegúrate de que este ID esté presente
+    ], style={'textAlign': 'center', 'margin': '20px'}),
+    
+    # Visualización del género preferido
+    html.Div([
+        html.H3("Género preferido previsto para este perfil:", style={'color': '#333'}),
+        html.H2(id='predicted-genre', style={'color': '#E50914'})
+    ], style={'textAlign': 'center', 'margin': '20px'}),
 
-        html.Div([
-            html.H3("Número total de visualizaciones para el perfil seleccionado:", style={'color': '#E5E5E5'}),
-            html.H2(id='views-count', style={'color': '#E50914', 'fontSize': '24px'})
-        ], style={'textAlign': 'center', 'margin': '20px'}),
-    ], style={'backgroundColor': '#222', 'padding': '20px', 'borderRadius': '10px', 'margin': '20px'}),
 
     # Gráfico de duración semanal y Top 10 Series y Películas
     html.Div([
@@ -67,21 +67,6 @@ app.layout = html.Div([
 
 ], style={'backgroundColor': '#141414', 'fontFamily': 'Arial, sans-serif'})
 
-# Callback para actualizar el tipo de contenido preferido
-@app.callback(
-    Output('preferred-content-type', 'children'),
-    Input('profile-dropdown', 'value')
-)
-def update_preferred_content_type(selected_profile):
-    # Entrenar el modelo cada vez que se cambia el perfil
-    model = train_content_type_model(df, selected_profile)
-    if model is None:
-        return "No hay suficiente información para este perfil"
-    
-    # Predecir el contenido preferido usando el año actual
-    current_year = pd.DataFrame([[pd.Timestamp.now().year]], columns=['Year'])
-    preferred_content_type = predict_content_type(model, current_year, le)
-    return f"{preferred_content_type}"
 
 # Callback para actualizar el contador de visualizaciones
 @app.callback(
@@ -92,6 +77,17 @@ def update_views_count(selected_profile):
     filtered_df = df[df['Profile Name'] == selected_profile]
     views_count = filtered_df.shape[0]
     return f"{views_count} visualizaciones"
+@app.callback(
+    Output('predicted-genre', 'children'),
+    Input('profile-dropdown', 'value')
+)
+def update_predicted_genre(selected_profile):
+    model = train_content_type_model(df, selected_profile)
+    if model is None:
+        return "No hay suficiente información para este perfil"
+    # Hacer una predicción para el año actual
+    predicted_genre = predict_content_type(model, X=pd.DataFrame([[pd.Timestamp.now().year]]), label_encoder=le)
+    return f"{predicted_genre}"
 
 # Callback para el gráfico de duración semanal
 @app.callback(
