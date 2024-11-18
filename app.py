@@ -10,7 +10,12 @@ app.title = "Análisis de Netflix"
 server = app.server
 
 # Cargar y preparar los datos
-df, le = load_and_prepare_data('src/ViewingActivity.csv')
+import os
+
+# Obtén la ruta relativa al archivo CSV
+csv_path = os.path.join(os.path.dirname(__file__), 'src', 'ViewingActivity.csv')
+df, le = load_and_prepare_data(csv_path)
+
 
 # Convertir 'Start Time' a datetime y 'Duration' a timedelta para facilitar el análisis
 df['Start Time'] = pd.to_datetime(df['Start Time'])
