@@ -24,7 +24,7 @@ df['Category'] = df['Title'].apply(
 app.layout = html.Div([
     # Encabezado con logo y título
     html.Div([
-        html.Img(src='/assets/netflix_logo.png', style={'width': '150px', 'display': 'inline-block', 'vertical-align': 'middle'}),
+        html.Img(src='/src/assets/netflix_logo.png', style={'width': '150px', 'display': 'inline-block', 'vertical-align': 'middle'}),
         html.H1("Análisis de Preferencias en Netflix", 
                 style={'color': '#E50914', 'display': 'inline-block', 'margin-left': '20px', 'vertical-align': 'middle'}),
     ], style={'textAlign': 'center', 'backgroundColor': '#141414', 'padding': '10px'}),
