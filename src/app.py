@@ -10,7 +10,7 @@ app.title = "Análisis de Netflix"
 server = app.server
 
 # Cargar y preparar los datos
-df, le = load_and_prepare_data('/Users/inessaavedra/Desktop/miapp/app_2425/App/src/ViewingActivity.csv')
+df, le = load_and_prepare_data('/Users/inessaavedra/Desktop/miapp/app_2425/src/ViewingActivity.csv')
 
 # Convertir 'Start Time' a datetime y 'Duration' a timedelta para facilitar el análisis
 df['Start Time'] = pd.to_datetime(df['Start Time'])
