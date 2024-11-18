@@ -15,9 +15,9 @@ df, le = load_and_prepare_data('/Users/inessaavedra/Desktop/miapp/app_2425/App/s
 # Convertir 'Start Time' a datetime y 'Duration' a timedelta para facilitar el análisis
 df['Start Time'] = pd.to_datetime(df['Start Time'])
 df['Duration'] = pd.to_timedelta(df['Duration'])
-df['Category'] = df['Title'].apply(
-    lambda x: 'Serie' if any(keyword in str(x) for keyword in ['Season', 'Temporada', 'Capítulo']) else 'Película'
-    )
+
+# Agregar una columna para categorizar en 'Serie' o 'Película'
+df['Category'] = df['Title'].apply(lambda x: 'Serie' if 'Season' in x or 'Episode' in x or 'Capítulo' in x or 'Temporada' in x else 'Película')
 
 # Layout de la aplicación
  
@@ -51,10 +51,6 @@ app.layout = html.Div([
         html.H2(id='predicted-genre', style={'color': '#E50914'})
     ], style={'textAlign': 'center', 'margin': '20px'}),
 
-    html.Div([
-    html.H3("Justificación del Género Preferido:", style={'color': '#E5E5E5', 'textAlign': 'center'}),
-    dcc.Graph(id='proportion-comparison', style={'margin': '20px'}),
-], style={'backgroundColor': '#333', 'padding': '20px', 'borderRadius': '10px'}),
 
     # Gráfico de duración semanal y Top 10 Series y Películas
     html.Div([
@@ -86,91 +82,12 @@ def update_views_count(selected_profile):
     Input('profile-dropdown', 'value')
 )
 def update_predicted_genre(selected_profile):
-    # Filtra los datos del perfil seleccionado
-    profile_data = df[df['Profile Name'] == selected_profile]
-    if profile_data.empty:
-        return "No hay suficiente información para este perfil"
-
-    # Reentrena el modelo con los datos del perfil seleccionado
     model = train_content_type_model(df, selected_profile)
     if model is None:
-        return "No se pudo entrenar el modelo para este perfil"
-
-    # Predice el género preferido (usa el año actual como entrada)
-    X_new = pd.DataFrame({'Year': [pd.Timestamp.now().year]})
-    predicted_genre = predict_content_type(model, X_new, le)
-
+        return "No hay suficiente información para este perfil"
+    # Hacer una predicción para el año actual
+    predicted_genre = predict_content_type(model, X=pd.DataFrame([[pd.Timestamp.now().year]]), label_encoder=le)
     return f"{predicted_genre}"
-
-@app.callback(
-    Output('proportion-comparison', 'figure'),
-    Input('profile-dropdown', 'value')
-)
-def update_visualizations_based_on_preference(selected_profile):
-    try:
-        # Filtrar los datos del perfil seleccionado
-        profile_data = df[df['Profile Name'] == selected_profile]
-        if profile_data.empty:
-            return px.bar(title="No hay suficientes datos")
-
-        # Reentrenar el modelo con los datos del perfil seleccionado
-        model = train_content_type_model(df, selected_profile)
-        if model is None:
-            return px.bar(title="No se pudo entrenar el modelo")
-
-        # Predice el género preferido (solo utiliza 'Year')
-        X_new = pd.DataFrame({'Year': [pd.Timestamp.now().year]})
-        predicted_genre = predict_content_type(model, X_new, le)
-
-        # Generar visualización basada en la predicción
-        if predicted_genre == 'Serie':
-            # Comparación de proporción de Series
-            user_series_ratio = profile_data['Category'].value_counts(normalize=True).get('Serie', 0)
-            global_series_ratio = df['Category'].value_counts(normalize=True).get('Serie', 0)
-            comparison_df = pd.DataFrame({
-                'Usuario': [user_series_ratio],
-                'Promedio Global': [global_series_ratio]
-            }, index=['Proporción de Series'])
-            fig_proportion = px.bar(
-                comparison_df.T,
-                barmode='group',
-                title='Proporción de Series (Usuario vs Global)',
-                labels={'value': 'Proporción', 'index': 'Comparación'},
-                color_discrete_sequence=['#E50914', '#333']
-            )
-
-        elif predicted_genre == 'Película':
-            # Comparación de proporción de Películas
-            user_movies_ratio = profile_data['Category'].value_counts(normalize=True).get('Película', 0)
-            global_movies_ratio = df['Category'].value_counts(normalize=True).get('Película', 0)
-            comparison_df = pd.DataFrame({
-                'Usuario': [user_movies_ratio],
-                'Promedio Global': [global_movies_ratio]
-            }, index=['Proporción de Películas'])
-            fig_proportion = px.bar(
-                comparison_df.T,
-                barmode='group',
-                title='Proporción de Películas (Usuario vs Global)',
-                labels={'value': 'Proporción', 'index': 'Comparación'},
-                color_discrete_sequence=['#E50914', '#333']
-            )
-
-        else:
-            # Manejar casos donde la predicción no es válida
-            fig_proportion = px.bar(title="Predicción no válida")
-
-        # Ajustar estilo de Netflix
-        fig_proportion.update_layout(
-            plot_bgcolor='#141414',  # Fondo negro
-            paper_bgcolor='#141414',  # Fondo negro
-            font_color='#E5E5E5'      # Texto blanco
-        )
-
-        return fig_proportion
-
-    except Exception as e:
-        return px.bar(title=f"Error: {str(e)}")
-
 
 # Callback para el gráfico de duración semanal
 @app.callback(
@@ -189,31 +106,16 @@ def update_duration_graph(selected_profile):
     fig.update_layout(plot_bgcolor='#333', paper_bgcolor='#333', font_color='#E5E5E5')
     return fig
 
+# Callback para el gráfico de top series
 @app.callback(
     Output('top-series-bar', 'figure'),
     Input('profile-dropdown', 'value')
 )
 def update_top_series(selected_profile):
-    # Filtrar datos del perfil
     filtered_df = df[(df['Profile Name'] == selected_profile) & (df['Category'] == 'Serie')]
-    
-    # Verificar si hay datos disponibles
-    if filtered_df.empty:
-        return px.bar(title="No hay datos de series para este perfil")
-
-    # Calcular las series más vistas
     top_series = filtered_df['Title'].value_counts().head(10).reset_index()
     top_series.columns = ['Title', 'Count']
-
-    # Crear el gráfico
-    fig = px.bar(
-        top_series, 
-        x='Count', 
-        y='Title', 
-        orientation='h', 
-        title='Top 10 Series Más Vistas',
-        color_discrete_sequence=['#E50914']
-    )
+    fig = px.bar(top_series, x='Count', y='Title', orientation='h', title='Top 10 Series Más Vistas', color_discrete_sequence=['#E50914'])
     fig.update_layout(plot_bgcolor='#333', paper_bgcolor='#333', font_color='#E5E5E5')
     return fig
 
