@@ -10,7 +10,7 @@ app.title = "Análisis de Netflix"
 server = app.server
 
 # Cargar y preparar los datos
-df, le = load_and_prepare_data('/Users/inessaavedra/Desktop/miapp/app_2425/src/ViewingActivity.csv')
+df, le = load_and_prepare_data('src/ViewingActivity.csv')
 
 # Convertir 'Start Time' a datetime y 'Duration' a timedelta para facilitar el análisis
 df['Start Time'] = pd.to_datetime(df['Start Time'])
@@ -23,8 +23,9 @@ df['Category'] = df['Title'].apply(
  
 app.layout = html.Div([
     # Encabezado con logo y título
+  
     html.Div([
-        html.Img(src='/src/assets/netflix_logo.png', style={'width': '150px', 'display': 'inline-block', 'vertical-align': 'middle'}),
+        html.Img(src='src/assets/netflix_logo.png', style={'width': '150px', 'display': 'inline-block', 'vertical-align': 'middle'}),
         html.H1("Análisis de Preferencias en Netflix", 
                 style={'color': '#E50914', 'display': 'inline-block', 'margin-left': '20px', 'vertical-align': 'middle'}),
     ], style={'textAlign': 'center', 'backgroundColor': '#141414', 'padding': '10px'}),
