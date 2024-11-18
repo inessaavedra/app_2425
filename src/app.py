@@ -2,7 +2,7 @@ import pandas as pd
 import dash
 from dash import dcc, html, Input, Output
 import plotly.express as px
-from netflix_genre_model import load_and_prepare_data, train_content_type_model, predict_content_type
+from src.netflix_genre_model import load_and_prepare_data, train_content_type_model, predict_content_type
 
 # Inicializar la aplicación Dash
 app = dash.Dash(__name__)
