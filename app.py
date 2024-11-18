@@ -21,7 +21,7 @@ df, le = load_and_prepare_data(csv_path)
 df['Start Time'] = pd.to_datetime(df['Start Time'])
 df['Duration'] = pd.to_timedelta(df['Duration'])
 df['Category'] = df['Title'].apply(
-    lambda x: 'Serie' if any(keyword in str(x) for keyword in ['Season', 'Temporada', 'Capítulo']) else 'Película'
+    lambda x: 'Serie' if any(keyword in str(x) for keyword in ['Season', 'Temporada', 'Capítulo', 'Episode']) else 'Película'
     )
 
 # Layout de la aplicación
