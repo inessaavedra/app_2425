@@ -29,13 +29,16 @@ La aplicación utiliza un modelo de clasificación entrenado con datos del histo
 
 ## Estructura del Proyecto
 
-├── app.py                   # Archivo principal de la aplicación
-├── requirements.txt         # Dependencias necesarias
-├── Procfile                 # Configuración de Gunicorn para el despliegue
-├── runtime.txt              # Versión de Python utilizada
+Estructura del Proyecto
+
+app_2425/
+├── app.py                  # Archivo principal de la aplicación
+├── requirements.txt        # Dependencias necesarias
+├── Procfile                # Configuración de Gunicorn para el despliegue
+├── runtime.txt             # Versión de Python utilizada
 ├── src/
-│   ├── netflix_genre_model.py # Módulo para el modelo predictivo
-│   ├── ViewingActivity.csv    # Dataset de visualización de Netflix
+│   ├── netflix_genre_model.py  # Módulo para el modelo predictivo
+│   ├── ViewingActivity.csv     # Dataset de visualización de Netflix
 
 ## Despliegue 
 
