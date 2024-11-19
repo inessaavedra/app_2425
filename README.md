@@ -33,6 +33,7 @@ Estructura del Proyecto
 
 app_2425/
 
+<<<<<<< HEAD
 ├── app.py                  # Archivo principal de la aplicación
 
 ├── requirements.txt        # Dependencias necesarias
@@ -47,6 +48,22 @@ app_2425/
     ├── netflix_genre_model.py  # Módulo para el modelo predictivo
     
     ├── ViewingActivity.csv     # Dataset de visualización de Netflix
+=======
+  ├── app.py   # Archivo principal de la aplicación
+
+  ├── requirements.txt        # Dependencias necesarias
+
+  ├── Procfile                # Configuración de Gunicorn para el despliegue
+
+  ├── runtime.txt             # Versión de Python utilizada
+
+  ├── src/
+
+      │   ├── netflix_genre_model.py  # Módulo para el modelo predictivo
+
+      │   ├── ViewingActivity.csv     # Dataset de visualización de Netflix
+
+>>>>>>> 105f99e75c31efbc8dd1fd028f1e027fbb0d3012
 
 ## Despliegue 
 
