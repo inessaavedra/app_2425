@@ -1,5 +1,7 @@
 # Análisis de Preferencias en Netflix
 
+Inés Saavedra Villafruela
+
 ## Descripción de la Aplicación
 
 Esta aplicación, permite analizar las preferencias de visualización de perfiles de Netflix, proporcionando una experiencia interactiva para entender los hábitos de consumo de contenido. La aplicación utiliza **Dash** para la creación de gráficos y paneles dinámicos, integrando análisis de datos avanzados y un modelo predictivo para determinar si el perfil analizado prefiere ver series o películas.
@@ -29,11 +31,9 @@ La aplicación utiliza un modelo de clasificación entrenado con datos del histo
 
 ## Estructura del Proyecto
 
-Estructura del Proyecto
-
 app_2425/
 
-<<<<<<< HEAD
+
 ├── app.py                  # Archivo principal de la aplicación
 
 ├── requirements.txt        # Dependencias necesarias
@@ -48,22 +48,6 @@ app_2425/
     ├── netflix_genre_model.py  # Módulo para el modelo predictivo
     
     ├── ViewingActivity.csv     # Dataset de visualización de Netflix
-=======
-  ├── app.py   # Archivo principal de la aplicación
-
-  ├── requirements.txt        # Dependencias necesarias
-
-  ├── Procfile                # Configuración de Gunicorn para el despliegue
-
-  ├── runtime.txt             # Versión de Python utilizada
-
-  ├── src/
-
-      │   ├── netflix_genre_model.py  # Módulo para el modelo predictivo
-
-      │   ├── ViewingActivity.csv     # Dataset de visualización de Netflix
-
->>>>>>> 105f99e75c31efbc8dd1fd028f1e027fbb0d3012
 
 ## Despliegue 
 
